@@ -17,8 +17,9 @@
 }
 
 body {
-    background: var(--premium-gradient);
-    background-attachment: fixed;
+    background: linear-gradient(-45deg, #1e3a8a, #3b82f6, #0ea5e9, #2563eb);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -27,20 +28,56 @@ body {
     position: relative;
 }
 
-/* Attractive Animated Background Element */
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Attractive Animated Background Element - Refined for "Lively" feel */
 body::before {
     content: '';
     position: absolute;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 50%);
-    animation: rotateBg 20s linear infinite;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+    top: 20%;
+    left: 20%;
+    animation: pulseGlow 8s ease-in-out infinite alternate;
     z-index: -1;
 }
 
-@keyframes rotateBg {
-    0% { transform: translate(-25%, -25%) rotate(0deg); }
-    100% { transform: translate(-25%, -25%) rotate(360deg); }
+@keyframes pulseGlow {
+    from { transform: scale(0.8) translate(-10%, -10%); opacity: 0.5; }
+    to { transform: scale(1.2) translate(10%, 10%); opacity: 0.8; }
+}
+
+.classic-checks {
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-left: 5px;
+}
+
+.check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.check-item input {
+    cursor: pointer;
+    width: 14px;
+    height: 14px;
+}
+
+.check-item label {
+    cursor: pointer;
+    margin-bottom: 0 !important;
+    white-space: nowrap;
 }
 
 .app-container {
@@ -116,7 +153,21 @@ body::before {
     font-weight: 500;
 }
 
-.classic-menu span:hover { color: var(--classic-blue); cursor: pointer; }
+.classic-menu span {
+    padding: 2px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.classic-menu span:hover {
+    background: #f1f5f9;
+    color: var(--classic-blue);
+}
+
+.classic-menu span:active {
+    background: #e2e8f0;
+}
 
 .classic-dashboard {
     flex-grow: 1;

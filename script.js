@@ -183,7 +183,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 7. Helpers
+    // 7. Menu Functionality
+    document.getElementById('menu-file').addEventListener('click', () => {
+        showToast('File menu clicked - Checking for updates...');
+    });
+
+    document.getElementById('menu-settings').addEventListener('click', () => {
+        // Switch to settings panel
+        navItems[3].click();
+        showToast('Settings opened');
+    });
+
+    document.getElementById('menu-help').addEventListener('click', () => {
+        showToast('Help: Press F1 for remote support');
+    });
+
+    // 8. Helpers
     function showToast(msg, isError = false) {
         toast.innerText = msg;
         toast.style.display = 'block';
