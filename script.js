@@ -86,7 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function formatId(id) {
-        return id.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
+        if (id.length <= 8) {
+            return id.replace(/(\d{3})(\d{3})(\d{2,})/, '$1 $2 $3');
+        }
+        return id.replace(/(\d{3})(\d{3})(\d{3,})/, '$1 $2 $3');
     }
 
     generateCredentials();
@@ -102,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (val.length > 9) val = val.slice(0, 9);
         e.target.value = formatId(val);
         
-        if (val.length === 9) {
+        if (val.length >= 8) {
              document.querySelector('.password-group').classList.remove('disabled');
              partnerPwInput.disabled = false;
         } else {
@@ -117,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const serverUrl = document.getElementById('server-url').value;
         const pw = partnerPwInput.value;
 
-        if (id.length < 9) return showToast('Invalid Partner ID', true);
+        if (id.length < 8) return showToast('Invalid Partner ID', true);
 
         connectBtn.disabled = true;
         connectBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connecting...';

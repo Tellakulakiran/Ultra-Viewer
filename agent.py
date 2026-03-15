@@ -13,6 +13,7 @@ import socket as py_socket
 import threading
 import time
 import engineio.async_drivers.threading
+import random
 
 # Initialize Flask and SocketIO with explicit threading mode
 app = Flask(__name__)
@@ -23,8 +24,9 @@ pyautogui.PAUSE = 0
 pyautogui.FAILSAFE = False
 
 # --- Agent Credentials ---
-AGENT_ID = str(np.random.randint(100000000, 999999999))
-AGENT_PW = str(np.random.randint(10000, 99999))
+# Using standard random for stability. 9 digits for ID, 5 for PW.
+AGENT_ID = str(random.randint(100000000, 999999999))
+AGENT_PW = str(random.randint(10000, 99999))
 
 print(f"======================================")
 print(f" AGENT STARTED")
