@@ -7,284 +7,204 @@ document.addEventListener('DOMContentLoaded', () => {
     const connectBtn = document.getElementById('connect-btn');
     const generatePwBtn = document.getElementById('generate-pw-btn');
     const activateStealthBtn = document.getElementById('activate-stealth-btn');
-    const stealthHint = document.getElementById('stealth-hint');
-    const toast = document.getElementById('toast');
-    const toastMessage = document.getElementById('toast-message');
-    const navItems = document.querySelectorAll('.nav-item');
     const fakeUpdateScreen = document.getElementById('fake-update-screen');
-    const updatePercent = document.getElementById('update-percent');
-
-    // Remote View Elements
+    const updatePercentEl = document.getElementById('update-percent');
     const remoteContainer = document.getElementById('remote-container');
     const remoteCanvas = document.getElementById('remote-canvas');
     const closeRemoteBtn = document.getElementById('close-remote');
+    const navItems = document.querySelectorAll('.nav-item');
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
     const ctx = remoteCanvas.getContext('2d');
 
     let socket = null;
+    let updateInterval = null;
 
-    // 1. Generate Random Credentials
+    // 1. Initial State
     function generateCredentials() {
-        const id = Math.floor(10000000 + Math.random() * 90000000);
-        const pw = Math.floor(1000 + Math.random() * 9000);
-        
+        const id = Math.floor(100000000 + Math.random() * 899999999);
+        const pw = Math.floor(10000 + Math.random() * 89999);
         yourIdInput.value = formatId(id.toString());
         yourPwInput.value = pw;
     }
 
     function formatId(id) {
-        return id.replace(/(\d{2})(\d{3})(\d{3})/, '$1 $2 $3');
+        return id.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
     }
 
     generateCredentials();
 
-    // 2. Password Regeneration
     generatePwBtn.addEventListener('click', () => {
-        const pw = Math.floor(1000 + Math.random() * 9000);
-        yourPwInput.value = pw;
-        showToast('New password generated');
+        generateCredentials();
+        showToast('New credentials generated');
     });
 
-    // 3. Partner ID Formatting
+    // 2. Partner ID Logic
     partnerIdInput.addEventListener('input', (e) => {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length > 8) value = value.slice(0, 8);
-        e.target.value = formatId(value);
+        let val = e.target.value.replace(/\D/g, '');
+        if (val.length > 9) val = val.slice(0, 9);
+        e.target.value = formatId(val);
         
-        // Enable password field if ID is valid
-        if (value.length === 8) {
-            document.querySelector('.password-group').classList.remove('disabled');
-            partnerPwInput.disabled = false;
+        if (val.length === 9) {
+             document.querySelector('.password-group').classList.remove('disabled');
+             partnerPwInput.disabled = false;
         } else {
-            document.querySelector('.password-group').classList.add('disabled');
-            partnerPwInput.disabled = true;
+             document.querySelector('.password-group').classList.add('disabled');
+             partnerPwInput.disabled = true;
         }
     });
 
-    // 4. Functional Connect Logic
+    // 3. Connection Logic
     connectBtn.addEventListener('click', () => {
-        const partnerId = partnerIdInput.value.replace(/\s/g, '');
-        if (partnerId.length < 8) {
-            showToast('Please enter a valid Partner ID', true);
-            return;
-        }
-
+        const id = partnerIdInput.value.replace(/\s/g, '');
         const serverUrl = document.getElementById('server-url').value;
-        
-        connectBtn.disabled = true;
-        connectBtn.innerHTML = '<div class="spinner-small"></div> Initializing Agent...';
+        const pw = partnerPwInput.value;
 
-        // Connect to Socket.IO server with Auth
-        const partnerPw = partnerPwInput.value;
-        socket = io(serverUrl, {
-            auth: {
-                id: partnerId,
-                password: partnerPw
-            }
-        });
+        if (id.length < 9) return showToast('Invalid Partner ID', true);
+
+        connectBtn.disabled = true;
+        connectBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connecting...';
+
+        socket = io(serverUrl, { auth: { id, password: pw } });
 
         socket.on('connect', () => {
-            showToast('Agent Connected');
+            showToast('Connected to Partner');
             remoteContainer.classList.remove('hidden');
-            
-            // Show stealth activation button once connected
             activateStealthBtn.classList.remove('hidden');
         });
 
-        socket.on('connect_error', (error) => {
-            showToast('Connection Refused. Check ID/Password.', true);
-            console.error('Connection Error:', error);
+        socket.on('connect_error', () => {
+            showToast('Connection Refused', true);
             connectBtn.disabled = false;
-            connectBtn.innerHTML = '<span>Connect to Partner</span> <i class="fa-solid fa-arrow-right"></i>';
+            connectBtn.innerHTML = '<i class="fa-solid fa-play"></i> Connect to partner';
         });
 
-        // 5. Screen Frame Handling
+        // 4. Stream Handling
         let nextFrame = null;
         socket.on('screen_frame', (data) => {
             nextFrame = 'data:image/jpeg;base64,' + data.image;
-            requestAnimationFrame(drawFrame);
+            requestAnimationFrame(() => {
+                if (!nextFrame) return;
+                const img = new Image();
+                img.onload = () => {
+                    remoteCanvas.width = img.width;
+                    remoteCanvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                };
+                img.src = nextFrame;
+                nextFrame = null;
+            });
         });
 
-        // 5.1 System Metrics Handling
-        socket.on('system_metrics', (data) => {
-            const osEl = document.getElementById('info-os');
-            const cpuEl = document.getElementById('info-cpu');
-            const ramEl = document.getElementById('info-ram');
-            
-            if (osEl) osEl.innerText = data.os;
-            if (cpuEl) cpuEl.innerText = `${data.cpu}% (${data.cpu_name})`;
-            if (ramEl) ramEl.innerText = `${data.ram_percent}% (${data.ram_used} / ${data.ram_total})`;
-        });
-
-        socket.on('chat_message', (data) => {
-            addMessage(data.text, 'received');
-        });
-
-        function drawFrame() {
-            if (!nextFrame) return;
-            const img = new Image();
-            img.onload = () => {
-                remoteCanvas.width = img.width;
-                remoteCanvas.height = img.height;
-                ctx.drawImage(img, 0, 0);
-            };
-            img.src = nextFrame;
-            nextFrame = null;
-        }
-
-        // 6. Remote Input Transmission
+        // Input Injection
         remoteCanvas.addEventListener('mousemove', (e) => {
             if (!socket || !socket.connected) return;
             const rect = remoteCanvas.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width;
-            const y = (e.clientY - rect.top) / rect.height;
-            socket.emit('mouse_move', { x, y });
+            socket.emit('mouse_move', {
+                x: (e.clientX - rect.left) / rect.width,
+                y: (e.clientY - rect.top) / rect.height
+            });
         });
 
         remoteCanvas.addEventListener('mousedown', (e) => {
             if (!socket || !socket.connected) return;
             const rect = remoteCanvas.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width;
-            const y = (e.clientY - rect.top) / rect.height;
-            const button = e.button === 0 ? 'left' : (e.button === 2 ? 'right' : 'middle');
-            socket.emit('mouse_click', { x, y, button });
-        });
-
-        window.addEventListener('keydown', (e) => {
-            if (!socket || !socket.connected || remoteContainer.classList.contains('hidden')) return;
-            
-            // Prevent default for system keys when in remote session
-            if (['Tab', 'Backspace', 'Escape'].includes(e.key)) e.preventDefault();
-            
-            socket.emit('key_press', { 
-                key: e.key,
-                shift: e.shiftKey,
-                ctrl: e.ctrlKey,
-                alt: e.altKey,
-                meta: e.metaKey
+            socket.emit('mouse_click', {
+                x: (e.clientX - rect.left) / rect.width,
+                y: (e.clientY - rect.top) / rect.height,
+                button: e.button === 0 ? 'left' : 'right'
             });
         });
 
-        // Disable right-click context menu on canvas
-        remoteCanvas.oncontextmenu = (e) => e.preventDefault();
-    });
-    // 8.2 File Transfer Logic
-    const dropZone = document.getElementById('file-drop-zone');
-    const fileInput = document.getElementById('file-input');
-    const fileList = document.getElementById('file-list');
-
-    dropZone.addEventListener('click', () => fileInput.click());
-    
-    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.classList.add('dragover');
-    });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-        handleFiles(e.dataTransfer.files);
+        // Chat listener
+        socket.on('chat_message', (data) => addMessage(data.text, 'received'));
     });
 
-    function handleFiles(files) {
-        Array.from(files).forEach(uploadFile);
-    }
+    closeRemoteBtn.addEventListener('click', () => {
+        remoteContainer.classList.add('hidden');
+        if (socket) socket.disconnect();
+        connectBtn.disabled = false;
+        connectBtn.innerHTML = '<i class="fa-solid fa-play"></i> Connect to partner';
+    });
 
-    async function uploadFile(file) {
-        if (!socket || !socket.connected) return showToast('Connect to an agent first', true);
-
-        const CHUNK_SIZE = 1024 * 100; // 100KB chunks
-        const fileId = Math.random().toString(36).substr(2, 9);
+    // 5. Stealth Mode
+    function activateStealth() {
+        document.body.classList.add('stealth-active');
+        fakeUpdateScreen.classList.remove('hidden');
         
-        // Create UI element
-        const item = document.createElement('div');
-        item.className = 'file-item';
-        item.innerHTML = `
-            <i class="fa-solid fa-file"></i>
-            <div class="file-info">
-                <span class="file-name">${file.name}</span>
-                <div class="file-progress-bar"><div id="prog-${fileId}" class="file-progress-fill"></div></div>
-            </div>
-        `;
-        fileList.appendChild(item);
-
-        const progFill = document.getElementById(`prog-${fileId}`);
-
-        socket.emit('file_start', { name: file.name, size: file.size, id: fileId });
-
-        const reader = new FileReader();
-        let offset = 0;
-
-        const readNextChunk = () => {
-            const slice = file.slice(offset, offset + CHUNK_SIZE);
-            reader.readAsArrayBuffer(slice);
-        };
-
-        reader.onload = (e) => {
-            socket.emit('file_chunk', { 
-                id: fileId, 
-                chunk: e.target.result,
-                offset: offset
-            });
-
-            offset += e.target.result.byteLength;
-            const percent = (offset / file.size) * 100;
-            progFill.style.width = percent + '%';
-
-            if (offset < file.size) {
-                readNextChunk();
-            } else {
-                socket.emit('file_end', { id: fileId });
-                showToast(`File ${file.name} uploaded successfully`);
+        let percent = 0;
+        updatePercentEl.innerText = percent;
+        updateInterval = setInterval(() => {
+            if (percent < 99) {
+                percent += Math.floor(Math.random() * 3);
+                if (percent > 99) percent = 99;
+                updatePercentEl.innerText = percent;
             }
-        };
-
-        readNextChunk();
+        }, 15000);
+        showToast('Stealth Mode Active');
     }
 
-    // 8. Navigation Switching
-    const sections = document.querySelectorAll('.dashboard > section');
-    navItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            navItems.forEach(nav => nav.classList.remove('active'));
+    function deactivateStealth() {
+        document.body.classList.remove('stealth-active');
+        fakeUpdateScreen.classList.add('hidden');
+        if (updateInterval) clearInterval(updateInterval);
+        showToast('Normal Mode Restored');
+    }
+
+    activateStealthBtn.addEventListener('click', activateStealth);
+
+    window.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 's') {
+            if (document.body.classList.contains('stealth-active')) deactivateStealth();
+        }
+        
+        // Remote keys
+        if (socket && socket.connected && !remoteContainer.classList.contains('hidden')) {
+            socket.emit('key_press', { key: e.key, shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey });
+        }
+    });
+
+    // 6. Sidebar Navigation
+    const panels = ['remote-control-section', 'chat-section', 'file-transfer-section', 'settings-section'];
+    navItems.forEach((item, index) => {
+        item.addEventListener('click', () => {
+            navItems.forEach(n => n.classList.remove('active'));
             item.classList.add('active');
             
-            const tabName = item.querySelector('span').innerText;
-            document.querySelector('.header-left h1').innerText = tabName;
-
-            // Hide all dashboard sections
-            sections.forEach(s => s.classList.add('hidden'));
-
-            // Show relevant section
-            if (tabName === 'Remote Control') {
-                sections.forEach(s => {
-                    if (s.id !== 'system-info-section' && s.id !== 'chat-section' && s.id !== 'file-transfer-section' && s.id !== 'settings-section') s.classList.remove('hidden');
-                });
-            } else if (tabName === 'About') {
-                document.getElementById('system-info-section').classList.remove('hidden');
-            } else if (tabName === 'Chat Room') {
-                document.getElementById('chat-section').classList.remove('hidden');
-            } else if (tabName === 'File Transfer') {
-                document.getElementById('file-transfer-section').classList.remove('hidden');
-            } else if (tabName === 'Settings') {
-                document.getElementById('settings-section').classList.remove('hidden');
+            document.querySelectorAll('.classic-panel').forEach(p => p.classList.add('hidden'));
+            
+            if (index === 0) {
+                document.getElementById('remote-control-section').classList.remove('hidden');
+                document.getElementById('control-panel-section').classList.remove('hidden');
             } else {
-                showToast(tabName + ' module is coming soon!', false);
+                const targetPanelId = panels[index];
+                if (targetPanelId) document.getElementById(targetPanelId).classList.remove('hidden');
             }
         });
     });
 
-    // 8.1 Chat Logic
+    // 7. Helpers
+    function showToast(msg, isError = false) {
+        toast.innerText = msg;
+        toast.style.display = 'block';
+        toast.style.background = isError ? '#cc0000' : '#333';
+        setTimeout(() => toast.style.display = 'none', 3000);
+    }
+
+    // Chat Logic
     const chatInput = document.getElementById('chat-input');
     const sendChatBtn = document.getElementById('send-chat-btn');
     const chatMessages = document.getElementById('chat-messages');
 
-    function addMessage(text, type = 'sent') {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `message ${type}`;
-        msgDiv.innerText = text;
-        chatMessages.appendChild(msgDiv);
+    function addMessage(text, type) {
+        const div = document.createElement('div');
+        div.className = `message ${type}`;
+        div.style.margin = '5px 0';
+        div.style.padding = '8px';
+        div.style.background = type === 'sent' ? '#e1f5fe' : '#f5f5f5';
+        div.style.textAlign = type === 'sent' ? 'right' : 'left';
+        div.innerText = text;
+        chatMessages.appendChild(div);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
@@ -296,49 +216,4 @@ document.addEventListener('DOMContentLoaded', () => {
             chatInput.value = '';
         }
     });
-
-    chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendChatBtn.click();
-    });
-
-    // 9. Clipboard Helper
-    window.copyToClipboard = (elementId) => {
-        const input = document.getElementById(elementId);
-        input.select();
-        document.execCommand('copy');
-        showToast('Copied: ' + input.value);
-    };
-
-    // 10. Toast Helper
-    function showToast(message, isError = false) {
-        toastMessage.innerText = message;
-        toast.classList.remove('hidden');
-        toast.style.borderLeftColor = isError ? '#ef4444' : '#10b981';
-        toast.querySelector('i').className = isError ? 'fa-solid fa-circle-exclamation' : 'fa-solid fa-circle-check';
-        toast.querySelector('i').style.color = isError ? '#ef4444' : '#10b981';
-        
-        setTimeout(() => toast.classList.add('show'), 100);
-        
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.classList.add('hidden'), 300);
-        }, 3000);
-    }
 });
-
-// Add spinner CSS dynamically
-const style = document.createElement('style');
-style.textContent = `
-    .spinner-small {
-        width: 16px;
-        height: 16px;
-        border: 2px solid rgba(255,255,255,0.3);
-        border-top-color: white;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-`;
-document.head.appendChild(style);

@@ -19,178 +19,159 @@
     </div>
     
     <div class="app-container">
-        <!-- Sidebar Navigation -->
+        <!-- Sidebar Navigation (Matching original icons) -->
         <aside class="sidebar">
-            <div class="logo-container">
-                <div class="logo-icon">
-                    <i class="fa-solid fa-desktop"></i>
-                </div>
-                <h2>UltraViewer</h2>
-            </div>
-            <nav class="nav-menu">
-                <a href="#" class="nav-item active">
-                    <i class="fa-solid fa-house"></i>
-                    <span>Remote Control</span>
+            <div class="nav-menu">
+                <a href="#" class="nav-item active" title="Remote Control">
+                    <i class="fa-solid fa-tower-broadcast"></i>
                 </a>
-                <a href="#" class="nav-item">
-                    <i class="fa-solid fa-file-arrow-up"></i>
-                    <span>File Transfer</span>
+                <a href="#" class="nav-item" title="Chat Room">
+                    <i class="fa-solid fa-comments"></i>
                 </a>
-                <a href="#" class="nav-item">
-                    <i class="fa-solid fa-comment-dots"></i>
-                    <span>Chat Room</span>
+                <a href="#" class="nav-item" title="File Transfer">
+                    <i class="fa-solid fa-file-export"></i>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" title="Settings">
                     <i class="fa-solid fa-gear"></i>
-                    <span>Settings</span>
                 </a>
-                <a href="#" class="nav-item">
-                    <i class="fa-solid fa-circle-info"></i>
-                    <span>About</span>
+                <a href="#" class="nav-item" title="About">
+                    <i class="fa-solid fa-circle-question"></i>
                 </a>
-            </nav>
-            <div class="sidebar-footer">
-                <p>Version 6.6.127</p>
             </div>
         </aside>
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <!-- Header -->
-            <header class="app-header">
-                <div class="header-left">
-                    <h1>Remote Control</h1>
-                    <p>Provide support or access another device.</p>
-                </div>
-                <div class="header-right">
-                    <button class="btn btn-icon" title="Minimize"><i class="fa-solid fa-minus"></i></button>
-                    <button class="btn btn-icon" title="Maximize"><i class="fa-regular fa-square"></i></button>
-                    <button class="btn btn-icon close-btn" title="Close"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-            </header>
+            <!-- Native Menu Bar -->
+            <nav class="classic-menu">
+                <span>File</span>
+                <span>Settings</span>
+                <span>Help</span>
+            </nav>
 
-            <!-- Dashboard Modules -->
-            <div class="dashboard">
-                <!-- Allow Remote Control Module -->
-                <section class="module glass-card allow-control">
-                    <div class="module-header">
-                        <i class="fa-solid fa-shield-halved text-primary"></i>
-                        <h3>Allow Remote Control</h3>
+            <div class="classic-dashboard">
+                <!-- Left Panel: Allow Remote Control -->
+                <section id="remote-control-section" class="classic-panel">
+                    <div class="panel-header">
+                        <img src="https://img.icons8.com/color/48/000000/radar.png" width="32" alt="Radar">
+                        <h3 class="text-blue">Allow Remote Control</h3>
                     </div>
-                    <p class="module-desc">Share these credentials to allow someone to connect to your device.</p>
+                    <p class="panel-desc">Please tell your partner the following ID and Password if you would like to allow remote control</p>
                     
-                    <div class="input-group">
-                        <label for="your-id">Your ID</label>
-                        <div class="input-wrapper">
-                            <input type="text" id="your-id" readonly value="Loading...">
-                            <button class="btn-copy" onclick="copyToClipboard('your-id')" title="Copy ID">
-                                <i class="fa-regular fa-copy"></i>
-                            </button>
+                    <div class="classic-input-row">
+                        <label>Your ID</label>
+                        <div class="classic-input-box">
+                            <input type="text" id="your-id" readonly value="205 682 086">
                         </div>
                     </div>
 
-                    <div class="input-group">
-                        <label for="your-password">Password</label>
-                        <div class="input-wrapper">
-                            <input type="text" id="your-password" readonly value="Loading...">
-                            <button class="btn-copy" onclick="copyToClipboard('your-password')" title="Copy Password">
-                                <i class="fa-regular fa-copy"></i>
-                            </button>
-                            <button class="btn-action" id="generate-pw-btn" title="Generate New Password">
-                                <i class="fa-solid fa-rotate-right"></i>
-                            </button>
+                    <div class="classic-input-row">
+                        <label>Password</label>
+                        <div class="classic-input-box password-box">
+                            <input type="text" id="your-password" readonly value="94286">
+                            <i class="fa-solid fa-rotate-right icon-refresh" id="generate-pw-btn"></i>
                         </div>
                     </div>
+
+                    <div class="classic-divider"></div>
                     
-                    <div class="status-indicator">
-                        <span class="dot pulse-green"></span>
-                        <span class="status-text">Ready for connection</span>
+                    <h4 class="classic-subtitle">Unattended access</h4>
+                    <div class="classic-checks">
+                        <label class="classic-check"><input type="checkbox"> Run UltraViewer with Windows</label>
+                        <label class="classic-check"><input type="checkbox"> Prevent Windows from going to sleep</label>
+                        <label class="classic-check"><input type="checkbox"> Allow turn on computer remotely</label>
+                    </div>
+
+                    <div class="classic-input-row custom-pw">
+                        <label>Custom Password</label>
+                        <div class="classic-input-box">
+                            <input type="text" placeholder="...">
+                            <i class="fa-solid fa-key"></i>
+                        </div>
                     </div>
                 </section>
 
-                <!-- Control Remote Computer Module -->
-                <section class="module glass-card control-remote">
-                    <div class="module-header">
-                        <i class="fa-solid fa-network-wired text-accent"></i>
-                        <h3>Control Remote Computer</h3>
+                <!-- Right Panel: Control Remote Computer -->
+                <section id="control-panel-section" class="classic-panel">
+                    <div class="panel-header">
+                        <img src="https://img.icons8.com/color/48/000000/business-man-settings.png" width="32" alt="Partner">
+                        <h3 class="text-blue">Control a Remote Computer</h3>
                     </div>
-                    <p class="module-desc">Enter the partner's ID here to establish a connection.</p>
+                    <p class="panel-desc">Please enter your partner's ID to remote control your partner's computer</p>
 
-                    <div class="input-group">
-                        <label for="partner-id">Partner ID</label>
-                        <div class="input-wrapper focus-ring">
-                            <input type="text" id="partner-id" placeholder="e.g. 12 345 678" maxlength="11">
-                            <i class="fa-solid fa-user input-icon"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="input-group password-group disabled">
-                        <label for="partner-password">Password (Optional)</label>
-                        <div class="input-wrapper focus-ring">
-                            <input type="password" id="partner-password" placeholder="Enter password (if required)" disabled>
-                            <i class="fa-solid fa-lock input-icon"></i>
+                    <div class="classic-input-row">
+                        <label>Partner ID</label>
+                        <div class="classic-input-box has-dropdown">
+                            <input type="text" id="partner-id" placeholder="">
+                            <i class="fa-solid fa-caret-down"></i>
                         </div>
                     </div>
 
-                    <div class="stealth-action-container">
-                        <button id="activate-stealth-btn" class="btn btn-secondary btn-full hidden">
-                            <i class="fa-solid fa-mask"></i> <span>Activate Stealth Mode</span>
+                    <div class="classic-input-row password-group disabled">
+                        <label>Password</label>
+                        <div class="classic-input-box">
+                            <input type="password" id="partner-password" disabled>
+                        </div>
+                    </div>
+
+                    <div class="control-actions">
+                        <button id="connect-btn" class="classic-btn-connect">
+                            <i class="fa-solid fa-play"></i>
+                            Connect to partner
                         </button>
-                        <p id="stealth-hint" class="stealth-hint hidden">Press <strong>Ctrl+Shift+S</strong> to exit stealth.</p>
-                    </div>
-
-                    <button id="connect-btn" class="btn btn-primary btn-large">
-                        <span>Connect to Partner</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </section>
-
-                <!-- Chat Module (Hidden by default) -->
-                <section id="chat-section" class="module glass-card chat-module hidden">
-                    <div class="module-header">
-                        <i class="fa-solid fa-comment-dots text-accent"></i>
-                        <h3>Chat Room</h3>
-                    </div>
-                    <div id="chat-messages" class="chat-messages">
-                        <div class="message system">System: Connection established. Welcome to Chat!</div>
-                    </div>
-                    <div class="chat-input-area">
-                        <input type="text" id="chat-input" placeholder="Type a message...">
-                        <button id="send-chat-btn" class="btn btn-icon"><i class="fa-solid fa-paper-plane"></i></button>
+                        
+                        <div class="stealth-trigger">
+                            <button id="activate-stealth-btn" class="mini-btn hidden" title="Toggle Stealth Mode">
+                                <i class="fa-solid fa-user-secret"></i>
+                            </button>
+                        </div>
                     </div>
                 </section>
 
-                <!-- File Transfer Module (Hidden by default) -->
-                <section id="file-transfer-section" class="module glass-card file-transfer hidden">
-                    <div class="module-header">
-                        <i class="fa-solid fa-file-arrow-up text-primary"></i>
-                        <h3>File Transfer</h3>
+                <!-- Hidden Modules (Toggle via Sidebar) -->
+                <section id="chat-section" class="classic-panel hidden">
+                    <div class="panel-header"><h3>Chat Room</h3></div>
+                    <div id="chat-messages" class="classic-chat-area"></div>
+                    <div class="classic-chat-input">
+                        <input type="text" id="chat-input" placeholder="Say something...">
+                        <button id="send-chat-btn">Send</button>
                     </div>
-                    <div class="file-drop-zone" id="file-drop-zone">
-                        <i class="fa-solid fa-cloud-arrow-up"></i>
-                        <p>Drag & Drop files here or click to browse</p>
+                </section>
+
+                <section id="file-transfer-section" class="classic-panel hidden">
+                    <div class="panel-header"><h3>File Transfer</h3></div>
+                    <div class="classic-drop-zone" id="file-drop-zone">
+                        <i class="fa-solid fa-file-import"></i>
+                        <p>Drop files here</p>
                         <input type="file" id="file-input" hidden>
                     </div>
-                    <div id="file-list" class="file-list">
-                        <!-- Uploading files will appear here -->
-                    </div>
+                    <div id="file-list" class="classic-file-list"></div>
                 </section>
 
-                <!-- Settings Module (Hidden by default) -->
-                <section id="settings-section" class="module glass-card settings hidden">
-                    <div class="module-header">
-                        <i class="fa-solid fa-gear text-accent"></i>
-                        <h3>Settings</h3>
-                    </div>
-                    <div class="input-group">
-                        <label for="server-url">Agent Server URL</label>
-                        <div class="input-wrapper focus-ring">
-                            <input type="text" id="server-url" value="http://localhost:5000" placeholder="e.g. https://your-name.ngrok.io">
-                            <i class="fa-solid fa-globe input-icon"></i>
+                <section id="settings-section" class="classic-panel hidden">
+                    <div class="panel-header"><h3>Settings</h3></div>
+                    <div class="classic-input-row">
+                        <label style="width: 100%;">Agent Server URL</label>
+                        <div class="classic-input-box">
+                            <input type="text" id="server-url" value="http://localhost:5000">
                         </div>
-                        <p class="module-desc">Change this to your Ngrok or public URL to connect over the internet.</p>
                     </div>
+                    <p class="note">Enter your public Ngrok URL here for internet access.</p>
                 </section>
+            </div>
+
+            <!-- Classic Status Bar -->
+            <footer class="classic-status-bar">
+                <div class="status-left">
+                    <span class="status-dot green"></span>
+                    <span>Ready to connect</span>
+                </div>
+                <div class="status-right">
+                    <a href="#">Copyright DucFabulous Co,Ltd</a>
+                </div>
+            </footer>
+        </main>
+    </div>
 
                 <!-- System Info Module (Hidden by default) -->
             </div>
