@@ -1,4 +1,60 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // 0. Live Background Animation
+    const bgCanvas = document.getElementById('live-bg-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    let particles = [];
+
+    function initBackground() {
+        bgCanvas.width = window.innerWidth;
+        bgCanvas.height = window.innerHeight;
+        particles = [];
+        for (let i = 0; i < 80; i++) {
+            particles.push({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                size: Math.random() * 2
+            });
+        }
+    }
+
+    function animateBackground() {
+        bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+        bgCtx.fillStyle = 'rgba(59, 130, 246, 0.5)';
+        bgCtx.strokeStyle = 'rgba(59, 130, 246, 0.1)';
+
+        particles.forEach((p, i) => {
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (p.x < 0 || p.x > bgCanvas.width) p.vx *= -1;
+            if (p.y < 0 || p.y > bgCanvas.height) p.vy *= -1;
+
+            bgCtx.beginPath();
+            bgCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            bgCtx.fill();
+
+            for (let j = i + 1; j < particles.length; j++) {
+                const p2 = particles[j];
+                const dx = p.x - p2.x;
+                const dy = p.y - p2.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 150) {
+                    bgCtx.beginPath();
+                    bgCtx.moveTo(p.x, p.y);
+                    bgCtx.lineTo(p2.x, p2.y);
+                    bgCtx.stroke();
+                }
+            }
+        });
+        requestAnimationFrame(animateBackground);
+    }
+
+    window.addEventListener('resize', initBackground);
+    initBackground();
+    animateBackground();
+
     // DOM Elements
     const yourIdInput = document.getElementById('your-id');
     const yourPwInput = document.getElementById('your-password');
@@ -22,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 1. Initial State
     function generateCredentials() {
+        // Generating 9-digit ID and 5-digit PW to match Agent update
         const id = Math.floor(100000000 + Math.random() * 899999999);
         const pw = Math.floor(10000 + Math.random() * 89999);
         yourIdInput.value = formatId(id.toString());

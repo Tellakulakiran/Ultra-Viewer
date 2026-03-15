@@ -23,8 +23,8 @@ pyautogui.PAUSE = 0
 pyautogui.FAILSAFE = False
 
 # --- Agent Credentials ---
-AGENT_ID = str(np.random.randint(10000000, 99999999))
-AGENT_PW = str(np.random.randint(1000, 9999))
+AGENT_ID = str(np.random.randint(100000000, 999999999))
+AGENT_PW = str(np.random.randint(10000, 99999))
 
 print(f"======================================")
 print(f" AGENT STARTED")

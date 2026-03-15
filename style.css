@@ -17,40 +17,27 @@
 }
 
 body {
-    background: linear-gradient(-45deg, #1e3a8a, #3b82f6, #0ea5e9, #2563eb);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
+    margin: 0;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100vh;
     overflow: hidden;
     position: relative;
+    background: #000; /* Deep black base */
 }
 
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* Attractive Animated Background Element - Refined for "Lively" feel */
-body::before {
-    content: '';
-    position: absolute;
-    width: 60%;
-    height: 60%;
-    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
-    top: 20%;
-    left: 20%;
-    animation: pulseGlow 8s ease-in-out infinite alternate;
+#live-bg-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: -1;
 }
 
-@keyframes pulseGlow {
-    from { transform: scale(0.8) translate(-10%, -10%); opacity: 0.5; }
-    to { transform: scale(1.2) translate(10%, 10%); opacity: 0.8; }
-}
+.classic-btn-connect i { color: var(--classic-blue); }
 
 .classic-checks {
     font-size: 0.85rem;
