@@ -12,6 +12,7 @@ import platform
 import socket as py_socket
 import threading
 import time
+import engineio.async_drivers.threading
 
 # Initialize Flask and SocketIO with explicit threading mode
 app = Flask(__name__)
