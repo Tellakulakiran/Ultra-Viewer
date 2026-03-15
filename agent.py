@@ -5,16 +5,17 @@ import numpy as np
 import base64
 from flask import Flask
 from flask_socketio import SocketIO, emit
-import eventlet
 import os
 import sys
 import psutil
 import platform
 import socket as py_socket
+import threading
+import time
 
-# Initialize Flask and SocketIO
+# Initialize Flask and SocketIO with explicit threading mode
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
 # Disable pyautogui safety features for faster response
 pyautogui.PAUSE = 0
@@ -109,7 +110,7 @@ def stream_metrics():
         except Exception as e:
             print(f"Error streaming metrics: {e}")
         
-        socketio.sleep(2) # Update every 2 seconds
+        time.sleep(2) # Update every 2 seconds
 
 # --- Screen Capture Logic ---
 def stream_screen():
@@ -136,7 +137,7 @@ def stream_screen():
             socketio.emit('screen_frame', {'image': jpg_as_text})
             
             # Optimization: yield for other tasks
-            socketio.sleep(0.05) # ~20 FPS
+            time.sleep(0.05) # ~20 FPS
 
 # --- Remote Input Logic ---
 @socketio.on('mouse_move')
