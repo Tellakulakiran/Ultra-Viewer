@@ -170,67 +170,65 @@ body::before {
 
 .classic-input-box {
     position: relative;
-    border: 1px solid #ccc;
-    height: 32px;
+    border: 1px solid #d1d5db;
+    height: 40px;
     display: flex;
     align-items: center;
-    padding: 0 8px;
+    padding: 0 12px;
     background: #fff;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.classic-input-box:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .classic-input-box input {
     border: none;
     width: 100%;
-    font-size: 1rem;
-    font-weight: normal;
+    font-size: 0.95rem;
+    font-weight: 500;
     outline: none;
+    color: #1e293b;
 }
 
-.password-box { background: #f9f9f9; }
-.password-box input { color: #000; font-weight: bold; }
+.password-box { background: #f8fafc; }
+.password-box input { color: #1e3a8a; letter-spacing: 1px; }
 
 .icon-refresh {
     font-size: 0.9rem;
-    color: var(--classic-blue);
+    color: #3b82f6;
     cursor: pointer;
+    transition: transform 0.3s ease;
 }
 
-.classic-divider {
-    height: 1px;
-    background: #eee;
-    margin: 15px 0;
-}
-
-.classic-subtitle { font-size: 0.9rem; margin-bottom: 10px; font-weight: 600; }
-
-.classic-checks { font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-
-.custom-pw label { width: 100px; display: inline-block; }
-.custom-pw .classic-input-box { width: 150px; }
-
-/* Right Panel specific */
-.has-dropdown { justify-content: space-between; }
-.has-dropdown i { color: #999; }
-
-.control-actions {
-    margin-top: auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
+.icon-refresh:hover { transform: rotate(180deg); }
 
 .classic-btn-connect {
-    background: linear-gradient(to bottom, #f9f9f9, #e9e9e9);
-    border: 1px solid #ccc;
-    height: 36px;
-    padding: 0 15px;
-    border-radius: 4px;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border: none;
+    height: 44px;
+    padding: 0 24px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-weight: 500;
+    gap: 12px;
+    color: white;
+    font-weight: 600;
     cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+    transition: all 0.2s ease;
 }
+
+.classic-btn-connect:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
+    filter: brightness(1.1);
+}
+
+.classic-btn-connect:active { transform: translateY(0); }
 
 .classic-btn-connect i { color: var(--classic-blue); }
 .classic-btn-connect:active { background: #ddd; }
